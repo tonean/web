@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Split Background</title>
+    <style>
+        @font-face {
+            font-family: 'Steamwreck';
+            src: url('/Users/toneanmorgan/Desktop/NJIT_Hackathon/font/steamwreck-font/Steamwreck-07pd.ttf') format('truetype');
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        /* Loading Page Styles */
+        #loadingPage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #videoContainer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #introVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .text-overlay {
+            position: absolute;
+            z-index: 2;
+            text-align: center;
+            color: white;
+            font-family: 'Steamwreck', sans-serif;
+        }
+
+        #mainTitle {
+            font-size: 18em;
+            margin-bottom: 20px;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+
+        #startPrompt {
+            font-size: 3em;
+            opacity: 0;
+            transition: opacity 2s ease;
+            position: relative;
+            top: -70px;
+            margin: 0;
+        }
+
+        /* Main Content Styles */
+        #mainContent {
+            display: none;
+        }
+        .container {
+            display: flex;
+            height: 100vh;
+            position: relative;
+            background-image: url("/Users/toneanmorgan/Desktop/NJIT_Hackathon/assets/ui/background1.jpg");
+            background-size: cover;
+            background-position: center;
+        }
+        .white-section, .yellow-section {
+            position: relative;
+        }
+        .white-section {
+            flex: 4;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .white-section::before, .yellow-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("https://www.transparenttextures.com/patterns/asfalt-dark.png");
+            opacity: 0.9;
+            pointer-events: none;
+        }
+        .yellow-section {
+            background-color: rgba(128, 93, 59, 0.8); /* Made transparent */
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding-left: 10px;
+            overflow-y: auto;
+            max-height: 100vh;
+            position: relative;
+        }
+
+        .sun-container {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .sun-image {
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+        }
+        
+        .yellow-section img {
+            width: 200px;
+            height: auto;
+        }
+        .fire-container {
+            display: flex;
+            align-items: center;
+            margin-top: 3px;
+            margin-left: 40px;
+        }
+        .fire-container img {
+            width: 80px;
+            height: auto;
+            margin-left: 20px;
+        }
+        .fire-text {
+            left: 60px;
+            position: relative;
+            top: 0px;
+        }
+        .coal-container {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            margin-left: 40px;
+        }
+        .coal-container img {
+            width: 90px;
+            height: auto;
+            margin-left: 20px;
+        }
+        .coal-text {
+            left: 50px;
+            position: relative;
+            top: 0px;
+        }
+        .steam-container {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            margin-left: 40px;
+        }
+        .steam-container img {
+            width: 100px;
+            height: auto;
+            margin-left: 20px;
+        }
+        .steam-text {
+            left: 40px;
+            position: relative;
+            top: 0px;
+        }
+        .wind-container {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            margin-left: 40px;
+        }
+        .wind-container img {
+            width: 130px;
+            height: auto;
+            margin-top: -10px;
+            margin-left: 5px;
+        }
+        .wind-text {
+            left: 30px;
+            position: relative;
+            top: -10px;
+        }
+        .water-container {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            margin-left: 40px;
+        }
+        .water-container img {
+            width: 90px;
+            height: auto;
+            margin-top: -10px;
+            margin-left: 30px;
+        }
+        .water-text {
+            left: 40px;
+            position: relative;
+            top: -10px;
+        }
+        .light-container {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            margin-left: 40px;
+        }
+        .light-container img {
+            width: 90px;
+            height: auto;
+            margin-top: 20px;
+            margin-left: 30px;
+        }
+        .light-text {
+            left: 30px;
+            position: relative;
+            top: 0px;
+        }
+        .yellow-section p {
+            font-family: 'Steamwreck';
+            font-size: 2.2em;
+            color: white;
+            margin: 0;
+            letter-spacing: 2px;
+            margin-left: -30px;
+        }
+        .coal-text {
+            font-family: 'Steamwreck';
+            font-size: 2.2em;
+            color: white;
+            margin: 0;
+            letter-spacing: 2px;
+            margin-left: -30px;
+        }
+        .steam-text {
+            font-family: 'Steamwreck';
+            font-size: 2.2em;
+            color: white;
+            margin: 0;
+            letter-spacing: 2px;
+            margin-left: -30px;
+        }
+
+        .draggable-image {
+            position: absolute;
+            cursor: move;
+            z-index: 1000;
+            touch-action: none;
+            user-select: none;
+        }
+
+        .combined-element {
+            position: absolute;
+            text-align: center;
+        }
+
+        .combined-element img {
+            width: 120px;
+            height: auto;
+        }
+
+        .combined-element p {
+            font-family: 'Steamwreck';
+            font-size: 1.5em;
+            color: white;
+            margin: 5px 0;
+            text-align: center;
+            width: 100%;
+            transition: opacity 2s;
+        }
+
+
+
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+            width: 200px;  /* Adjustable width */
+            height: 100px; /* Adjustable height */
+            pointer-events: none;
+            z-index: 2000;
+        }
+
+        .trash-can {
+            position: absolute;
+            top: 20px;  /* Position from top */
+            left: 20px; /* Position from left */
+            width: 60px;   /* Width of trash can */
+            height: auto;  /* Height auto to maintain aspect ratio */
+            z-index: 999;
+        }
+
+        .fade-out {
+            opacity: 0;
+            transition: opacity 2s ease-out;
+        }
+
+        .info-panel {
+            position: absolute;
+            top: 20px; /* Adjust position */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px; /* Adjust width */
+            height: 100px; /* Adjust height */
+            background-color: rgba(0, 0, 0, 0.6); /* Adjust transparency */
+            border-radius: 25px; /* Adjust roundness */
+            z-index: 10;
+        }
+
+        /* Vignette effect */
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+            background: radial-gradient(
+                circle at center,
+                transparent 40%, /* Adjust size of clear center */
+                rgba(0, 0, 0, 0.4) 100% /* Adjust darkness of edges */
+            );
+        }
+    </style>
+</head>
+<body>
+    <div id="loadingPage">
+        <div id="videoContainer">
+            <video id="introVideo" playsinline>
+                <source src="/Users/toneanmorgan/Desktop/NJIT_Hackathon/assets/ui/first.mov" type="video/mp4">
+            </video>
+        </div>
+        <div class="text-overlay">
+            <div id="mainTitle">Energy Source</div>
+            <div id="startPrompt">Press any key to start</div>
+        </div>
+    </div>
+    
+    <div id="mainContent">
+        <div class="container">
+            <div class="vignette"></div>
+            <div class="info-panel"></div>
+            <div class="white-section">
+                <img src="/Users/toneanmorgan/Desktop/NJIT_Hackathon/assets/ui/trash.png" alt="Trash Can" class="trash-can">
+            </div>
+            <div class="yellow-section">
+                <div class="sun-container">
+                    <div class="sun-image">
+                        <img src="/Users/toneanmorgan/Desktop/NJIT_Hackathon/assets/sun.png" alt="Sun Image">
+                        <p>Sun</p>
+                    </div>
+                </div>
+                <div class="fire-container">
+                    <img src="/Users/toneanmorgan/Desktop/NJIT_Hackathon/assets/fire.png" alt="Fire Image">
+                    <p class="fire-text">Fire</p>
+                </div>
+                <div class="coal-container">
+                    <img src="/Users/toneanmorgan/Desktop/NJIT_Hackathon/assets/coal_face.png" alt="Coal Image">
+                    <p class="coal-text">Coal</p>
+                </div>
+                <div class="steam-container">
+                    <img src="/Users/toneanmorgan/Desktop/NJIT_Hackathon/assets/Steam.png" alt="Steam Image">
+                    <p class="steam-text">Steam</p>
+                </div>
+                <div class="wind-container">
+                    <img src="/Users/toneanmorgan/Desktop/NJIT_Hackathon/assets/wind_face.png" alt="Wind Image">
+                    <p class="wind-text">Wind</p>
+                </div>
+                <div class="water-container">
+                    <img src="/Users/toneanmorgan/Desktop/NJIT_Hackathon/assets/water.png" alt="Water Image">
+                    <p class="water-text">Water</p>
+                </div>
+                <div class="light-container">
+                    <img src="/Users/toneanmorgan/Desktop/NJIT_Hackathon/assets/lightning.png" alt="Lightning Image">
+                    <p class="light-text">Lightning</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loadingPage = document.getElementById('loadingPage');
+            const video = document.getElementById('introVideo');
+            const mainTitle = document.getElementById('mainTitle');
+            const startPrompt = document.getElementById('startPrompt');
+            const mainContent = document.getElementById('mainContent');
+            
+            // Start playing the video
+            video.play();
+
+            // When video ends
+            video.addEventListener('ended', () => {
+                // Pause on last frame
+                video.currentTime = video.duration;
+                
+                // Fade in main title
+                setTimeout(() => {
+                    mainTitle.style.opacity = '1';
+                    
+                    // Fade in start prompt after main title
+                    setTimeout(() => {
+                        startPrompt.style.opacity = '1';
+                    }, 1000);
+                }, 500);
+            });
+
+            // Listen for any keypress
+            document.addEventListener('keydown', () => {
+                // Only proceed if video has ended
+                if (video.ended) {
+                    loadingPage.style.display = 'none';
+                    mainContent.style.display = 'block';
+                }
+            });
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const whiteSection = document.querySelector('.white-section');
+            const menuImages = document.querySelectorAll('.yellow-section img');
+            
+            // Define valid combinations
+            const combinations = {
+                'Steam-Wind': {
+                    name: 'Wind-Powered Steam Generator',
+                    image: '/Users/toneanmorgan/Desktop/NJIT_Hackathon/assets/combined/steam_generator.png'
+                },
+                'Sun-Water': {
+                    name: 'Solar Water Heater',
+                    image: '/Users/toneanmorgan/Desktop/NJIT_Hackathon/assets/combined/water_heater.png'
+                },
+                'Wind-Sun': {
+                    name: 'Energy Systems',
+                    image: '/Users/toneanmorgan/Desktop/NJIT_Hackathon/assets/combined/energy_systems.png'
+                },
+                'Steam-Coal': {
+                    name: 'Steam Train',
+                    image: '/Users/toneanmorgan/Desktop/NJIT_Hackathon/assets/combined/steam_boiler.png'
+                },
+                'Water-Wind': {
+                    name: 'Hydroelectric Dam',
+                    image: '/Users/toneanmorgan/Desktop/NJIT_Hackathon/assets/combined/hydroelectric_dam.png'
+                },
+                'Lightning-Water': {
+                    name: 'Lightning energy rod',
+                    image: '/Users/toneanmorgan/Desktop/NJIT_Hackathon/assets/combined/lightning_energy_rod.png'
+                }
+            };
+
+            menuImages.forEach(img => {
+                img.addEventListener('click', function() {
+                    const newImage = document.createElement('img');
+                    newImage.src = this.src;
+                    newImage.className = 'draggable-image';
+                    newImage.dataset.type = this.parentElement.querySelector('p').textContent;
+                    newImage.style.width = this.offsetWidth + 'px';
+                    
+                    const maxX = whiteSection.offsetWidth - this.offsetWidth;
+                    const maxY = whiteSection.offsetHeight - this.offsetHeight;
+                    const randomX = Math.random() * maxX;
+                    const randomY = Math.random() * maxY;
+                    
+                    newImage.style.left = randomX + 'px';
+                    newImage.style.top = randomY + 'px';
+                    
+                    whiteSection.appendChild(newImage);
+                    makeDraggable(newImage);
+                });
+            });
+
+            function checkCollision(rect1, rect2) {
+                return !(rect1.right < rect2.left || 
+                        rect1.left > rect2.right || 
+                        rect1.bottom < rect2.top || 
+                        rect1.top > rect2.bottom);
+            }
+
+            function createCombinedElement(type1, type2, x, y) {
+                const combinationKey = `${type1}-${type2}`;
+                const reverseCombinationKey = `${type2}-${type1}`;
+                
+                const combination = combinations[combinationKey] || combinations[reverseCombinationKey];
+                
+                if (!combination) return null;
+
+                const container = document.createElement('div');
+                container.className = 'combined-element';
+                container.style.left = x + 'px';
+                container.style.top = y + 'px';
+
+                const img = document.createElement('img');
+                img.src = combination.image;
+                img.style.width = '120px';
+
+                const text = document.createElement('p');
+                text.textContent = combination.name;
+                
+                // Add fade out functionality
+                setTimeout(() => {
+                    text.classList.add('fade-out');
+                }, 2000);
+
+                container.appendChild(img);
+                container.appendChild(text);
+                makeDraggable(container);
+
+                return container;
+            }
+
+            function makeDraggable(element) {
+                let isDragging = false;
+                let startX, startY;
+                let elementX, elementY;
+
+                element.addEventListener('mousedown', onMouseDown);
+                element.addEventListener('touchstart', onTouchStart);
+
+                function onMouseDown(e) {
+                    isDragging = true;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    elementX = element.offsetLeft;
+                    elementY = element.offsetTop;
+
+                    document.addEventListener('mousemove', onMouseMove);
+         
